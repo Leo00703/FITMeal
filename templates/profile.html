@@ -156,7 +156,7 @@
                     <ul style="list-style: none; padding: 0;">
                         {% for fav in favorites %}
                         <li style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.05);">
-                            <a href="{{ url_for('recipe', recipe_id=fav.recipe_id) }}" style="font-weight: 600; color: var(--color-text);">{{ fav.recipe_name }}</a>
+                            <span style="font-weight: 600; color: var(--color-text);">{{ fav.recipe_name }}</span>
                             <form action="{{ url_for('remove_favorite_route', recipe_id=fav.recipe_id) }}" method="POST" style="display: inline;">
                                 <button type="submit" style="background: none; border: none; color: #e53e3e; cursor: pointer; font-size: 0.9rem;">Remove</button>
                             </form>

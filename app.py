@@ -154,28 +154,40 @@ def plan():
     plan_data = database.get_plan(user_id)
     if not plan_data:
         return redirect(url_for('planner'))
-    return render_template('plan.html', plan=plan_data['week_plan'])
+    
+    favorites = database.get_favorites(user_id)
+    favorite_ids = [f['recipe_id'] for f in favorites]
+    
+    return render_template('plan.html', plan=plan_data['week_plan'], plan_status=plan_data.get('status', 'draft'), favorite_ids=favorite_ids)
 
-@app.route('/recipe/<recipe_id>')
+@app.route('/toggle_favorite/<recipe_id>', methods=['POST'])
 @login_required
-def recipe(recipe_id):
-    # In a real app, we would fetch details or generate them on the fly
-    # For now, let's generate a mock detail or retrieve if saved
-    recipe_data = database.get_recipe(recipe_id)
+def toggle_favorite_route(recipe_id):
+    user_id = session.get('user_id')
+    data = request.get_json()
+    recipe_name = data.get('recipe_name', 'Unknown Recipe')
     
-    if not recipe_data:
-        # If not found, we could ask AI to generate it (optional feature)
-        # For this MVP, we'll return a generic template or mock
-        recipe_data = {
-            "name": "Delicious Healthy Meal",
-            "time": "30m",
-            "ingredients": ["Ingredient 1", "Ingredient 2", "Ingredient 3"],
-            "steps": ["Step 1: Prep", "Step 2: Cook", "Step 3: Serve"],
-            "rationale": "Fits your high-protein goal.",
-            "nutrition": {"calories": 450, "protein": "30g", "carbs": "40g", "fat": "15g"}
-        }
+    # Check if already favorite
+    favorites = database.get_favorites(user_id)
+    is_fav = any(f['recipe_id'] == recipe_id for f in favorites)
     
-    return render_template('recipe.html', recipe=recipe_data)
+    if is_fav:
+        database.remove_favorite(user_id, recipe_id)
+        action = 'removed'
+    else:
+        database.add_favorite(user_id, recipe_id, recipe_name)
+        action = 'added'
+        
+    return jsonify({"status": "success", "action": action})
+
+@app.route('/save_plan', methods=['POST'])
+@login_required
+def save_plan_route():
+    user_id = session.get('user_id')
+    database.update_plan_status(user_id, 'saved')
+    return jsonify({'status': 'success'})
+
+
 
 def _get_mock_plan():
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]

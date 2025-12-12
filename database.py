@@ -24,9 +24,16 @@ def init_db():
         CREATE TABLE IF NOT EXISTS plans (
             user_id TEXT PRIMARY KEY,
             plan_data TEXT NOT NULL,
+            status TEXT DEFAULT 'draft',
             FOREIGN KEY (user_id) REFERENCES users (id)
         )
     ''')
+    
+    # Migration: Add status column if it doesn't exist
+    try:
+        conn.execute('ALTER TABLE plans ADD COLUMN status TEXT DEFAULT "draft"')
+    except sqlite3.OperationalError:
+        pass
     conn.execute('''
         CREATE TABLE IF NOT EXISTS recipes (
             id TEXT PRIMARY KEY,
@@ -69,21 +76,31 @@ def init_db():
     conn.commit()
     conn.close()
 
-def save_plan(user_id, plan_data):
+def save_plan(user_id, plan_data, status='draft'):
     """Save a generated plan for a user."""
     conn = get_db_connection()
-    conn.execute('INSERT OR REPLACE INTO plans (user_id, plan_data) VALUES (?, ?)',
-                 (user_id, json.dumps(plan_data)))
+    conn.execute('INSERT OR REPLACE INTO plans (user_id, plan_data, status) VALUES (?, ?, ?)',
+                 (user_id, json.dumps(plan_data), status))
+    conn.commit()
+    conn.close()
+
+def update_plan_status(user_id, status):
+    """Update the status of a user's plan."""
+    conn = get_db_connection()
+    conn.execute('UPDATE plans SET status = ? WHERE user_id = ?', (status, user_id))
     conn.commit()
     conn.close()
 
 def get_plan(user_id):
     """Retrieve a saved plan."""
     conn = get_db_connection()
-    row = conn.execute('SELECT plan_data FROM plans WHERE user_id = ?', (user_id,)).fetchone()
+    row = conn.execute('SELECT plan_data, status FROM plans WHERE user_id = ?', (user_id,)).fetchone()
     conn.close()
     if row:
-        return json.loads(row['plan_data'])
+        return {
+            'week_plan': json.loads(row['plan_data'])['week_plan'],
+            'status': row['status']
+        }
     return None
 
 def save_recipe(recipe_id, recipe_data):

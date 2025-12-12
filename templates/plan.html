@@ -6,33 +6,52 @@
 <div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
         <h2>Your Weekly Plan</h2>
-        <div>
-            <a href="{{ url_for('planner') }}" class="btn btn-secondary">Regenerate</a>
-            <button class="btn btn-primary" onclick="alert('Plan saved!')">Save Plan</button>
+        <div style="display: flex; gap: 1rem;">
+            <a href="{{ url_for('planner') }}" class="btn btn-secondary" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/></svg>
+                Regenerate
+            </a>
+            <button id="savePlanBtn" class="btn btn-outline-green" onclick="savePlan()" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save Plan
+            </button>
         </div>
     </div>
 
-    <div class="week-grid">
-        {% for day, meals in plan.items() %}
-        <div class="glass-card day-card">
-            <h3 style="margin-bottom: 1rem; color: var(--color-accent);">{{ day }}</h3>
-            <div class="meal-list">
-                {% for meal in meals %}
-                <!-- Pass meal data as JSON string in data-meal attribute -->
-                <div class="meal-item" data-meal-type="{{ meal.meal }}" onclick='openMealModal({{ meal | tojson | safe }})'>
-                    <div style="font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem; opacity: 0.7;">{{ meal.meal }}</div>
-                    <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--color-text);">{{ meal.recipe_name }}</div>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
-                        <span class="tag time">⏱ {{ meal.time }}</span>
-                        {% for tag in meal.tags %}
-                        <span class="tag">{{ tag }}</span>
-                        {% endfor %}
+    <div class="plan-carousel-container">
+        <button class="nav-btn prev-btn" id="prevBtn" onclick="moveCarousel(-1)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        
+        <div class="week-grid" id="weekGrid">
+            {% for day, meals in plan.items() %}
+            <div class="glass-card day-card">
+                <h3 style="margin-bottom: 1rem; color: var(--color-accent);">{{ day }}</h3>
+                <div class="meal-list">
+                    {% for meal in meals %}
+                    <!-- Pass meal data as JSON string in data-meal attribute -->
+                    <div class="meal-item" data-meal-type="{{ meal.meal }}" data-meal-id="{{ meal.id }}" onclick='openMealModal({{ meal | tojson | safe }})'>
+                        <div class="meal-heart-icon {% if meal.id in favorite_ids %}visible{% endif %}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </div>
+                        <div style="font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem; opacity: 0.7;">{{ meal.meal }}</div>
+                        <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--color-text); padding-right: 1.5rem;">{{ meal.recipe_name }}</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                            <span class="tag time">⏱ {{ meal.time }}</span>
+                            {% for tag in meal.tags %}
+                            <span class="tag">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+
+        <button class="nav-btn next-btn" id="nextBtn" onclick="moveCarousel(1)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
     </div>
 </div>
 
@@ -48,17 +67,72 @@
 </div>
 
 <style>
+    .plan-carousel-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        position: relative;
+    }
+
     .week-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        display: flex;
         gap: 1.5rem;
+        width: 100%;
+        overflow: hidden;
     }
 
     .day-card {
+        flex: 0 0 calc(33.333% - 1rem);
         padding: 1.5rem;
         background: rgba(255, 255, 255, 0.4);
         border: 1px solid rgba(255, 255, 255, 0.5);
         box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        display: none; /* Hidden by default */
+    }
+
+    .day-card.active {
+        display: block;
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    .nav-btn {
+        background: var(--color-accent);
+        color: white;
+        border: none;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .nav-btn:hover {
+        transform: scale(1.1);
+        background: var(--color-accent-hover);
+    }
+
+    .nav-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        transform: none;
+        background: #cbd5e0;
+    }
+
+    @media (max-width: 992px) {
+        .day-card {
+            flex: 0 0 calc(50% - 0.75rem); /* 2 items on tablet */
+        }
+    }
+
+    @media (max-width: 768px) {
+        .day-card {
+            flex: 0 0 100%; /* 1 item on mobile */
+        }
     }
 
     .day-card h3 {
@@ -80,12 +154,25 @@
         border: 1px solid rgba(255,255,255,0.8);
         border-left: 5px solid #cbd5e0;
         box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        position: relative; /* For absolute positioning of heart icon */
     }
 
     .meal-item:hover {
         background: #fff;
         transform: translateY(-3px);
         box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .meal-heart-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: #e53e3e;
+        display: none; /* Hidden by default */
+    }
+    
+    .meal-heart-icon.visible {
+        display: block;
     }
 
     /* Meal Type Colors */
@@ -284,9 +371,24 @@
         flex-shrink: 0;
         margin-top: 2px;
     }
+
+    .modal-heart-icon {
+        position: absolute;
+        top: 2rem;
+        left: 2rem;
+        color: #e53e3e;
+        font-size: 1.5rem;
+        display: none;
+    }
+    .modal-heart-icon.visible {
+        display: block;
+    }
 </style>
 
 <script>
+    // Pass favorite IDs from backend to JS
+    let favoriteIds = {{ favorite_ids | tojson | safe }};
+
     function openMealModal(meal) {
         const modal = document.getElementById('mealModal');
         const body = document.getElementById('modalBody');
@@ -335,7 +437,15 @@
             mealTagColor = '#702459';
         }
 
+        const isFavorite = favoriteIds.includes(meal.id);
+        const favBtnText = isFavorite ? 'Added to Favorites' : 'Add to Favorites';
+        const favBtnClass = isFavorite ? 'btn-favorite-active' : '';
+        const favBtnStyle = isFavorite ? 'background-color: #e53e3e; color: white; border-color: #e53e3e;' : '';
+
         body.innerHTML = `
+            <div class="modal-heart-icon ${isFavorite ? 'visible' : ''}" id="modalHeartIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </div>
             <div style="text-align: center; margin-bottom: 2rem;">
                 <span class="tag" style="font-size: 0.9rem; padding: 4px 12px; margin-bottom: 0.5rem; display: inline-block; background: ${mealTagBg}; color: ${mealTagColor};">${meal.meal}</span>
                 <h2 style="font-size: 2rem; margin: 0.5rem 0;">${meal.recipe_name}</h2>
@@ -375,14 +485,58 @@
             ${instructionsHtml}
             
             <div style="margin-top: 2rem; text-align: center;">
-                <form action="/add_favorite/${meal.id}" method="POST">
-                    <input type="hidden" name="recipe_name" value="${meal.recipe_name}">
-                    <button type="submit" class="btn btn-secondary" style="width: 100%;">❤️ Add to Favorites</button>
-                </form>
+                <button id="favBtn" class="btn btn-secondary ${favBtnClass}" style="width: 100%; ${favBtnStyle}" onclick="toggleFavorite('${meal.id}', '${meal.recipe_name.replace(/'/g, "\\'")}')">
+                    ❤️ ${favBtnText}
+                </button>
             </div>
         `;
 
         modal.classList.add('active');
+    }
+
+    function toggleFavorite(recipeId, recipeName) {
+        fetch('/toggle_favorite/' + recipeId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ recipe_name: recipeName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const btn = document.getElementById('favBtn');
+                const modalHeart = document.getElementById('modalHeartIcon');
+                
+                // Update local state
+                if (data.action === 'added') {
+                    favoriteIds.push(recipeId);
+                    btn.innerHTML = 'Added to Favorites';
+                    btn.style.backgroundColor = '#e53e3e';
+                    btn.style.color = 'white';
+                    btn.style.borderColor = '#e53e3e';
+                    modalHeart.classList.add('visible');
+                } else {
+                    favoriteIds = favoriteIds.filter(id => id !== recipeId);
+                    btn.innerHTML = '❤️ Add to Favorites';
+                    btn.style.backgroundColor = ''; // Reset to default
+                    btn.style.color = '';
+                    btn.style.borderColor = '';
+                    modalHeart.classList.remove('visible');
+                }
+                
+                // Update the card in the grid immediately
+                const cardHeart = document.querySelector(`.meal-item[data-meal-id="${recipeId}"] .meal-heart-icon`);
+                if (cardHeart) {
+                    if (data.action === 'added') {
+                        cardHeart.classList.add('visible');
+                    } else {
+                        cardHeart.classList.remove('visible');
+                    }
+                }
+            }
+        })
+        .catch(error => console.error('Error:', error));
     }
 
     function closeModal() {
@@ -394,6 +548,91 @@
         if (e.target === this) {
             closeModal();
         }
+    });
+
+    // Save Plan Logic
+    const planStatus = "{{ plan_status }}";
+    const saveBtn = document.getElementById('savePlanBtn');
+
+    function updateSaveButton(status) {
+        if (status === 'saved') {
+            saveBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Saved
+            `;
+            // Style is handled by CSS class .btn-outline-green
+            // Allow overwriting by keeping the onclick handler active
+        }
+    }
+
+    // Initialize button state
+    updateSaveButton(planStatus);
+
+    function savePlan() {
+        fetch('/save_plan', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                updateSaveButton('saved');
+            }
+        })
+        .catch(error => console.error('Error saving plan:', error));
+    }
+
+    // Carousel Logic
+    let currentIndex = 0;
+    const itemsPerPage = 3;
+    const dayCards = document.querySelectorAll('.day-card');
+    const totalItems = dayCards.length;
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    function updateCarousel() {
+        // Determine items per page based on screen width
+        let visibleCount = itemsPerPage;
+        if (window.innerWidth <= 768) visibleCount = 1;
+        else if (window.innerWidth <= 992) visibleCount = 2;
+
+        // Hide all
+        dayCards.forEach(card => card.classList.remove('active'));
+
+        // Show current slice
+        for (let i = 0; i < visibleCount; i++) {
+            if (currentIndex + i < totalItems) {
+                dayCards[currentIndex + i].classList.add('active');
+            }
+        }
+
+        // Update buttons
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex + visibleCount >= totalItems;
+    }
+
+    function moveCarousel(direction) {
+        let visibleCount = itemsPerPage;
+        if (window.innerWidth <= 768) visibleCount = 1;
+        else if (window.innerWidth <= 992) visibleCount = 2;
+
+        const newIndex = currentIndex + direction;
+        
+        if (newIndex >= 0 && newIndex <= totalItems - visibleCount) {
+            currentIndex = newIndex;
+            updateCarousel();
+        }
+    }
+
+    // Initial call
+    updateCarousel();
+    
+    // Update on resize
+    window.addEventListener('resize', () => {
+        currentIndex = 0; // Reset to start on resize to avoid index issues
+        updateCarousel();
     });
 </script>
 {% endblock %}
