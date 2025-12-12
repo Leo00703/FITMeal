@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FitMeal Planner{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="{{ url_for('index') }}" class="logo">FitMeal Planner</a>
+                <ul class="nav-links">
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('about') }}">Why FitMeal</a></li>
+                    {% if session.get('username') %}
+                        <li><a href="{{ url_for('planner') }}">Create a Meal</a></li>
+                        <li><a href="{{ url_for('plan') }}">Your Weekly Meal</a></li>
+                        <li><a href="{{ url_for('logout') }}" style="color: var(--color-accent);">Logout ({{ session.username }})</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                        <li><a href="{{ url_for('register') }}" class="btn btn-primary" style="padding: 0.5rem 1rem; color: white;">Sign Up</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container" style="text-align: center; padding: 2rem 0; color: var(--color-text-muted); font-size: 0.9rem;">
+            &copy; 2025 FitMeal Planner. Powered by Groq & AI.
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

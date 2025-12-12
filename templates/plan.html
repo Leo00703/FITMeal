@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}FitMeal Planner - Your Plan{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Your Weekly Plan</h2>
+        <div>
+            <a href="{{ url_for('planner') }}" class="btn btn-secondary">Regenerate</a>
+            <button class="btn btn-primary" onclick="alert('Plan saved!')">Save Plan</button>
+        </div>
+    </div>
+
+    <div class="week-grid">
+        {% for day, meals in plan.items() %}
+        <div class="glass-card day-card">
+            <h3 style="margin-bottom: 1rem; color: var(--color-accent);">{{ day }}</h3>
+            <div class="meal-list">
+                {% for meal in meals %}
+                <div class="meal-item" onclick="openRecipe('{{ meal.id }}')">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: var(--color-text-muted);">{{ meal.meal }}</div>
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">{{ meal.recipe_name }}</div>
+                    <div style="display: flex; gap: 0.5rem; font-size: 0.8rem;">
+                        <span class="tag time">⏱ {{ meal.time }}</span>
+                        {% for tag in meal.tags %}
+                        <span class="tag">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Slide-over Panel -->
+<div id="recipePanel" class="slide-over">
+    <div class="slide-over-content glass-card">
+        <button class="close-btn" onclick="closeRecipe()">&times;</button>
+        <div id="recipeContent">
+            <div style="text-align: center; padding: 2rem;">Loading...</div>
+        </div>
+    </div>
+    <div class="slide-over-backdrop" onclick="closeRecipe()"></div>
+</div>
+
+<style>
+    .week-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .day-card {
+        padding: 1.5rem;
+    }
+
+    .meal-item {
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .meal-item:hover {
+        background: rgba(255, 255, 255, 0.7);
+    }
+
+    .tag {
+        background: rgba(107, 70, 193, 0.1);
+        color: var(--color-accent);
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    /* Slide-over Styles */
+    .slide-over {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2000;
+        pointer-events: none;
+        display: flex;
+        justify-content: flex-end;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .slide-over.active {
+        pointer-events: auto;
+        opacity: 1;
+    }
+
+    .slide-over-backdrop {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(2px);
+    }
+
+    .slide-over-content {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        height: 100%;
+        border-radius: 0;
+        border-top-left-radius: 20px;
+        border-bottom-left-radius: 20px;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        overflow-y: auto;
+        background: rgba(255, 255, 255, 0.85); /* More opaque for readability */
+        z-index: 2001;
+    }
+
+    .slide-over.active .slide-over-content {
+        transform: translateX(0);
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        color: var(--color-text-muted);
+        z-index: 2002;
+    }
+</style>
+
+<script>
+    function openRecipe(id) {
+        const panel = document.getElementById('recipePanel');
+        const content = document.getElementById('recipeContent');
+        
+        panel.classList.add('active');
+        content.innerHTML = '<div style="text-align: center; padding: 2rem;">Loading...</div>';
+
+        fetch(`/recipe/${id}`)
+            .then(response => response.text())
+            .then(html => {
+                content.innerHTML = html;
+            })
+            .catch(err => {
+                content.innerHTML = '<div style="color: red; padding: 2rem;">Error loading recipe.</div>';
+            });
+    }
+
+    function closeRecipe() {
+        document.getElementById('recipePanel').classList.remove('active');
+    }
+</script>
+{% endblock %}

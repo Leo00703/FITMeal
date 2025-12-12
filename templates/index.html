@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}FitMeal Planner - Home{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="glass-card hero-card">
+            <h1 class="hero-title">AI-generated meal plans tailored to your goals</h1>
+            <p class="hero-subtitle">
+                Tell us your goals, we generate the week. Edit anything.
+            </p>
+            <a href="{{ url_for('planner') }}" class="btn btn-primary hero-btn">
+                Create your meal plan
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="section features-section">
+    <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <div class="features-grid">
+            <div class="glass-card feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Set Your Goals</h3>
+                <p>Tell us if you want to lose weight, build muscle, or just eat healthier. We adapt to your needs.</p>
+            </div>
+            <div class="glass-card feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI Generation</h3>
+                <p>Our advanced AI creates a unique 7-day plan instantly, ensuring variety and nutritional balance.</p>
+            </div>
+            <div class="glass-card feature-card">
+                <div class="feature-icon">✏️</div>
+                <h3>Customize</h3>
+                <p>Don't like a recipe? Swap it out, change ingredients, or regenerate the whole day in seconds.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Food Showcase Section -->
+<section class="section showcase-section">
+    <div class="container">
+        <div class="glass-card showcase-content">
+            <div class="showcase-text">
+                <h2>Delicious, Healthy, & Easy</h2>
+                <p>
+                    Forget boring diet food. FitMeal Planner focuses on flavor-packed recipes that are easy to prepare.
+                    From vibrant salads to hearty protein bowls, enjoy food that fuels your body and delights your taste buds.
+                </p>
+                <a href="{{ url_for('about') }}" class="btn btn-secondary">Learn More About Us</a>
+            </div>
+            <div class="showcase-image">
+                <!-- Placeholder for food image -->
+                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Healthy Food Bowl">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="section cta-section">
+    <div class="container">
+        <div class="glass-card cta-card">
+            <h2>Ready to transform your diet?</h2>
+            <p>Join thousands of users who have simplified their nutrition with FitMeal Planner.</p>
+            <a href="{{ url_for('planner') }}" class="btn btn-primary btn-large">Start Your Free Plan</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
