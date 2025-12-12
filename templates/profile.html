@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}FitMeal Planner - Profile{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+    
+    {% if message %}
+    <div style="background: rgba(0, 255, 0, 0.1); color: #2f855a; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; text-align: center;">
+        {{ message }}
+    </div>
+    {% endif %}
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start;">
+        
+        <!-- Left Column: Profile Card & Stats -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            
+            <!-- Profile Card -->
+            <div class="glass-card" style="padding: 2rem; text-align: center;">
+                <div style="width: 120px; height: 120px; border-radius: 50%; background: #eee; margin: 0 auto 1.5rem; overflow: hidden; border: 4px solid rgba(255,255,255,0.5);">
+                    {% if profile and profile.profile_pic %}
+                        <img src="{{ profile.profile_pic }}" alt="Profile Pic" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #ccc;">
+                            {{ session.username[0] | upper }}
+                        </div>
+                    {% endif %}
+                </div>
+                <h2 style="margin-bottom: 0.5rem;">{{ session.username }}</h2>
+                <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">{{ profile.bio if profile and profile.bio else "No bio yet." }}</p>
+                
+                <a href="{{ url_for('logout') }}" onclick="return confirm('Are you sure you want to logout?');" class="btn" style="background: #e53e3e; color: white; width: 100%;">Logout</a>
+            </div>
+
+            <!-- Stats Card -->
+            <div class="glass-card" style="padding: 2rem;">
+                <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 0.5rem;">My Stats</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <small style="color: var(--color-text-muted);">Weight</small>
+                        <div style="font-size: 1.2rem; font-weight: 600;">{{ profile.weight if profile and profile.weight else "--" }} kg</div>
+                    </div>
+                    <div>
+                        <small style="color: var(--color-text-muted);">Height</small>
+                        <div style="font-size: 1.2rem; font-weight: 600;">{{ profile.height if profile and profile.height else "--" }} cm</div>
+                    </div>
+                    <div>
+                        <small style="color: var(--color-text-muted);">Age</small>
+                        <div style="font-size: 1.2rem; font-weight: 600;">{{ profile.age if profile and profile.age else "--" }}</div>
+                    </div>
+                    <div>
+                        <small style="color: var(--color-text-muted);">Sex</small>
+                        <div style="font-size: 1.2rem; font-weight: 600;">{{ profile.sex if profile and profile.sex else "--" }}</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <small style="color: var(--color-text-muted);">Goal</small>
+                    <div style="font-size: 1.1rem; font-weight: 600; color: var(--color-accent);">{{ profile.goal if profile and profile.goal else "--" }}</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Edit Form, Plans, Favorites -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            
+            <!-- Edit Profile Form -->
+            <div class="glass-card" style="padding: 2rem;">
+                <h3 style="margin-bottom: 1.5rem;">Edit Profile</h3>
+                <form action="{{ url_for('profile') }}" method="POST">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="age">Age</label>
+                            <input type="number" id="age" name="age" value="{{ profile.age if profile else '' }}" min="1" max="120">
+                        </div>
+                        <div class="form-group">
+                            <label for="sex">Sex</label>
+                            <select id="sex" name="sex">
+                                <option value="" disabled {% if not profile or not profile.sex %}selected{% endif %}>Select...</option>
+                                <option value="Male" {% if profile and profile.sex == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if profile and profile.sex == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if profile and profile.sex == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="weight">Weight (kg)</label>
+                            <input type="number" id="weight" name="weight" value="{{ profile.weight if profile else '' }}" step="0.1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="height">Height (cm)</label>
+                            <input type="number" id="height" name="height" value="{{ profile.height if profile else '' }}" min="1">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label for="activity_level">Activity Level</label>
+                        <select id="activity_level" name="activity_level">
+                            <option value="" disabled {% if not profile or not profile.activity_level %}selected{% endif %}>Select...</option>
+                            <option value="Sedentary" {% if profile and profile.activity_level == 'Sedentary' %}selected{% endif %}>Sedentary</option>
+                            <option value="Lightly active" {% if profile and profile.activity_level == 'Lightly active' %}selected{% endif %}>Lightly active</option>
+                            <option value="Moderately active" {% if profile and profile.activity_level == 'Moderately active' %}selected{% endif %}>Moderately active</option>
+                            <option value="Very active" {% if profile and profile.activity_level == 'Very active' %}selected{% endif %}>Very active</option>
+                            <option value="Super active" {% if profile and profile.activity_level == 'Super active' %}selected{% endif %}>Super active</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label for="goal">Goal</label>
+                        <select id="goal" name="goal">
+                            <option value="" disabled {% if not profile or not profile.goal %}selected{% endif %}>Select...</option>
+                            <option value="Lose Weight" {% if profile and profile.goal == 'Lose Weight' %}selected{% endif %}>Lose Weight</option>
+                            <option value="Maintain Weight" {% if profile and profile.goal == 'Maintain Weight' %}selected{% endif %}>Maintain Weight</option>
+                            <option value="Gain Muscle" {% if profile and profile.goal == 'Gain Muscle' %}selected{% endif %}>Gain Muscle</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" name="bio" rows="3" placeholder="Tell us about yourself...">{{ profile.bio if profile and profile.bio else '' }}</textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label for="profile_pic">Profile Picture URL</label>
+                        <input type="url" id="profile_pic" name="profile_pic" value="{{ profile.profile_pic if profile and profile.profile_pic else '' }}" placeholder="https://example.com/my-pic.jpg">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="margin-top: 1.5rem;">Save Changes</button>
+                </form>
+            </div>
+
+            <!-- Weekly Plan Section -->
+            <div class="glass-card" style="padding: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="margin: 0;">My Weekly Plan</h3>
+                    <a href="{{ url_for('plan') }}" class="btn btn-primary" style="font-size: 0.9rem;">View Full Plan</a>
+                </div>
+                
+                {% if plan and plan.week_plan %}
+                    <p>You have a meal plan generated. Click above to view details.</p>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;">
+                        {% for day in plan.week_plan %}
+                            <span style="background: rgba(255,255,255,0.5); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem;">{{ day }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="color: var(--color-text-muted);">No plan generated yet.</p>
+                    <a href="{{ url_for('planner') }}" style="color: var(--color-accent); font-weight: 600;">Create one now &rarr;</a>
+                {% endif %}
+            </div>
+
+            <!-- Favorites Section -->
+            <div class="glass-card" style="padding: 2rem;">
+                <h3 style="margin-bottom: 1.5rem;">Favorite Dishes</h3>
+                {% if favorites %}
+                    <ul style="list-style: none; padding: 0;">
+                        {% for fav in favorites %}
+                        <li style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                            <a href="{{ url_for('recipe', recipe_id=fav.recipe_id) }}" style="font-weight: 600; color: var(--color-text);">{{ fav.recipe_name }}</a>
+                            <form action="{{ url_for('remove_favorite_route', recipe_id=fav.recipe_id) }}" method="POST" style="display: inline;">
+                                <button type="submit" style="background: none; border: none; color: #e53e3e; cursor: pointer; font-size: 0.9rem;">Remove</button>
+                            </form>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p style="color: var(--color-text-muted);">No favorites yet.</p>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,90 +1,380 @@
 {% extends "base.html" %}
 
-{% block title %}FitMeal Planner - Create Plan{% endblock %}
+{% block title %}FitMeal Planner - Design Your Week{% endblock %}
+
+{% block head %}
+<style>
+    /* Custom Styles for Planner Page */
+    .planner-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--color-text);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Card Selection Grid */
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .selection-card {
+        background: rgba(255, 255, 255, 0.5);
+        border: 2px solid transparent;
+        border-radius: 16px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .selection-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+
+    .selection-card.selected {
+        border-color: var(--color-accent);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 0 0 4px rgba(107, 70, 193, 0.1);
+    }
+
+    .selection-card input[type="radio"] {
+        display: none;
+    }
+
+    .card-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .card-label {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--color-text);
+    }
+
+    /* Tag Input System */
+    .tag-input-container {
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(0,0,0,0.1);
+        border-radius: 12px;
+        padding: 0.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        min-height: 50px;
+        position: relative;
+    }
+
+    .tag-pill {
+        background: var(--color-accent);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .tag-remove {
+        cursor: pointer;
+        font-weight: bold;
+        opacity: 0.8;
+        margin-left: 0.5rem;
+    }
+    .tag-remove:hover { opacity: 1; }
+
+    .tag-input {
+        background: transparent;
+        border: none;
+        outline: none;
+        flex: 1;
+        min-width: 120px;
+        padding: 0.5rem;
+        font-size: 1rem;
+        color: var(--color-text);
+    }
+
+    .suggestions-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        z-index: 10;
+        max-height: 200px;
+        overflow-y: auto;
+        display: none;
+        margin-top: 0.5rem;
+    }
+
+    .suggestion-item {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .suggestion-item:hover {
+        background: #f7fafc;
+        color: var(--color-accent);
+    }
+
+    /* Range Slider Styling */
+    input[type=range] {
+        width: 100%;
+        accent-color: var(--color-accent);
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
-    <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
-        <h2 style="text-align: center; margin-bottom: 2rem;">Design Your Week</h2>
+<div class="planner-container">
+    <div style="text-align: center; margin-bottom: 3rem;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Design Your Perfect Meal Week</h1>
+        <p style="color: var(--color-text-muted); font-size: 1.1rem;">Customize your nutrition plan with AI precision.</p>
+    </div>
+
+    <form id="plannerForm" action="{{ url_for('generate_plan') }}" method="POST">
         
-        <form id="plannerForm" action="{{ url_for('generate_plan') }}" method="POST">
-            <!-- Core Preferences -->
-            <div class="form-group">
-                <label for="goal">Fitness Goal</label>
-                <input type="text" id="goal" name="goal" placeholder="e.g., Lose weight, Build muscle, Eat healthier" required>
-            </div>
+        <!-- 1. Fitness Goal -->
+        <div class="section-title">
+            <span>🎯</span> What is your main goal?
+        </div>
+        <div class="card-grid">
+            <label class="selection-card" onclick="selectCard(this, 'goal')">
+                <input type="radio" name="goal" value="Lose Weight" required>
+                <span class="card-icon">⚖️</span>
+                <span class="card-label">Lose Weight</span>
+            </label>
+            <label class="selection-card" onclick="selectCard(this, 'goal')">
+                <input type="radio" name="goal" value="Maintain Weight">
+                <span class="card-icon">🧘</span>
+                <span class="card-label">Maintain Weight</span>
+            </label>
+            <label class="selection-card" onclick="selectCard(this, 'goal')">
+                <input type="radio" name="goal" value="Gain Muscle">
+                <span class="card-icon">💪</span>
+                <span class="card-label">Gain Muscle</span>
+            </label>
+            <label class="selection-card" onclick="selectCard(this, 'goal')">
+                <input type="radio" name="goal" value="Eat Healthier">
+                <span class="card-icon">🥗</span>
+                <span class="card-label">Eat Healthier</span>
+            </label>
+        </div>
 
-            <div class="form-group">
-                <label for="diet">Diet Type</label>
-                <select id="diet" name="diet">
-                    <option value="balanced">Balanced</option>
-                    <option value="keto">Keto</option>
-                    <option value="vegan">Vegan</option>
-                    <option value="vegetarian">Vegetarian</option>
-                    <option value="paleo">Paleo</option>
-                    <option value="mediterranean">Mediterranean</option>
-                </select>
-            </div>
+        <!-- 2. Meals Per Day -->
+        <div class="section-title">
+            <span>🍽️</span> How many meals per day?
+        </div>
+        <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+            <label class="selection-card" onclick="selectCard(this, 'meals_per_day')">
+                <input type="radio" name="meals_per_day" value="3" required>
+                <span class="card-icon">3️⃣</span>
+                <span class="card-label">3 Meals</span>
+                <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.5rem;">Breakfast, Lunch, Dinner</div>
+            </label>
+            <label class="selection-card" onclick="selectCard(this, 'meals_per_day')">
+                <input type="radio" name="meals_per_day" value="4">
+                <span class="card-icon">4️⃣</span>
+                <span class="card-label">4 Meals</span>
+                <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.5rem;">+ 1 Snack</div>
+            </label>
+            <label class="selection-card" onclick="selectCard(this, 'meals_per_day')">
+                <input type="radio" name="meals_per_day" value="5">
+                <span class="card-icon">5️⃣</span>
+                <span class="card-label">5 Meals</span>
+                <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.5rem;">+ 2 Snacks</div>
+            </label>
+        </div>
 
-            <div class="form-group">
-                <label for="allergies">Allergies / Exclusions</label>
-                <input type="text" id="allergies" name="allergies" placeholder="e.g., Peanuts, Gluten, Dairy">
+        <!-- 3. Diet & Allergies -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+            <div>
+                <div class="section-title"><span>🥑</span> Diet Type</div>
+                <div class="glass-card" style="padding: 1.5rem;">
+                    <select id="diet" name="diet" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #ddd; background: white;">
+                        <option value="balanced">Balanced</option>
+                        <option value="keto">Keto</option>
+                        <option value="vegan">Vegan</option>
+                        <option value="vegetarian">Vegetarian</option>
+                        <option value="paleo">Paleo</option>
+                        <option value="mediterranean">Mediterranean</option>
+                        <option value="pescatarian">Pescatarian</option>
+                    </select>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="meals_per_day">Meals per Day</label>
-                <select id="meals_per_day" name="meals_per_day">
-                    <option value="3">3 (Breakfast, Lunch, Dinner)</option>
-                    <option value="4">4 (+ Snack)</option>
-                    <option value="5">5 (+ 2 Snacks)</option>
-                </select>
+            
+            <div>
+                <div class="section-title"><span>🚫</span> Allergies / Exclusions</div>
+                <div class="tag-input-container" id="tagContainer">
+                    <!-- Tags will appear here -->
+                    <input type="text" class="tag-input" id="tagInput" placeholder="Type and press Enter...">
+                    <div class="suggestions-dropdown" id="suggestionsDropdown"></div>
+                </div>
+                <input type="hidden" name="allergies" id="allergiesHidden">
             </div>
+        </div>
 
-            <!-- Advanced Options Accordion -->
-            <details style="margin-bottom: 1.5rem; cursor: pointer;">
-                <summary style="font-weight: 600; color: var(--color-accent); margin-bottom: 1rem;">Advanced Settings</summary>
-                <div style="padding-left: 1rem; border-left: 2px solid rgba(255,255,255,0.5);">
-                    <div class="form-group">
-                        <label for="creativity">AI Creativity</label>
-                        <input type="range" id="creativity" name="creativity" min="0" max="1" step="0.1" value="0.7">
-                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--color-text-muted);">
-                            <span>Safe</span>
-                            <span>Creative</span>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="cuisine">Preferred Cuisine</label>
-                        <input type="text" id="cuisine" name="cuisine" placeholder="e.g., Italian, Asian, Mexican">
+        <!-- 4. Advanced Settings -->
+        <div class="glass-card" style="padding: 2rem; margin-bottom: 2.5rem;">
+            <h3 style="margin-bottom: 1.5rem;">✨ AI Customization</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="form-group">
+                    <label for="creativity" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Creativity Level</label>
+                    <input type="range" id="creativity" name="creativity" min="0" max="1" step="0.1" value="0.7">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.5rem;">
+                        <span>Traditional</span>
+                        <span>Experimental</span>
                     </div>
                 </div>
-            </details>
+                <div class="form-group">
+                    <label for="cuisine" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Preferred Cuisine</label>
+                    <input type="text" id="cuisine" name="cuisine" placeholder="e.g., Italian, Asian, Mexican" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #ddd;">
+                </div>
+            </div>
+        </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;">Generate Plan</button>
-        </form>
-    </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1.25rem; font-size: 1.2rem; font-weight: 700; border-radius: 12px; box-shadow: 0 4px 15px rgba(107, 70, 193, 0.3);">
+            Generate My Meal Plan 🚀
+        </button>
+    </form>
 </div>
 
-<!-- AI Generation State Overlay (Hidden by default) -->
-<div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center;">
-    <div class="glass-card" style="text-align: center; max-width: 400px;">
-        <div class="spinner" style="margin: 0 auto 1.5rem; width: 50px; height: 50px; border: 4px solid rgba(107, 70, 193, 0.2); border-top-color: var(--color-accent); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-        <h3>Generating your plan...</h3>
-        <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">Powered by AI — Model: GPT-OSS:120b</p>
-        <button type="button" class="btn btn-secondary" onclick="window.location.reload()">Cancel</button>
+<!-- Loading Overlay -->
+<div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="text-align: center;">
+        <div class="spinner" style="margin: 0 auto 1.5rem; width: 60px; height: 60px; border: 5px solid rgba(107, 70, 193, 0.2); border-top-color: var(--color-accent); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <h2 style="color: var(--color-text);">Crafting your plan...</h2>
+        <p style="color: var(--color-text-muted);">Our AI is analyzing nutritional data for you.</p>
     </div>
 </div>
 
 <style>
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
-
 {% endblock %}
 
 {% block scripts %}
 <script>
+    // Card Selection Logic
+    function selectCard(card, groupName) {
+        // Remove selected class from all cards in this group
+        const cards = document.querySelectorAll(`.selection-card input[name="${groupName}"]`);
+        cards.forEach(input => {
+            input.closest('.selection-card').classList.remove('selected');
+        });
+        
+        // Add selected class to clicked card
+        card.classList.add('selected');
+        
+        // Check the radio button (handled by label click usually, but ensuring here)
+        const radio = card.querySelector('input[type="radio"]');
+        radio.checked = true;
+    }
+
+    // Tag System Logic
+    const tagInput = document.getElementById('tagInput');
+    const tagContainer = document.getElementById('tagContainer');
+    const hiddenInput = document.getElementById('allergiesHidden');
+    const suggestionsDropdown = document.getElementById('suggestionsDropdown');
+    
+    let tags = [];
+    const suggestions = [
+        "Peanuts", "Tree Nuts", "Milk", "Egg", "Wheat", "Soy", "Fish", "Shellfish", 
+        "Gluten", "Dairy", "Sesame", "Mustard", "Celery", "Lupin", "Sulfites",
+        "Mushrooms", "Tomatoes", "Avocado", "Bananas", "Strawberries"
+    ];
+
+    function renderTags() {
+        // Clear existing tags (except input)
+        const existingTags = tagContainer.querySelectorAll('.tag-pill');
+        existingTags.forEach(tag => tag.remove());
+        
+        // Add tags
+        tags.forEach(tag => {
+            const pill = document.createElement('div');
+            pill.className = 'tag-pill';
+            pill.innerHTML = `
+                ${tag}
+                <span class="tag-remove" onclick="removeTag('${tag}')">&times;</span>
+            `;
+            tagContainer.insertBefore(pill, tagInput);
+        });
+        
+        // Update hidden input
+        hiddenInput.value = tags.join(', ');
+    }
+
+    function addTag(tag) {
+        tag = tag.trim();
+        if (tag && !tags.includes(tag)) {
+            tags.push(tag);
+            renderTags();
+        }
+        tagInput.value = '';
+        suggestionsDropdown.style.display = 'none';
+    }
+
+    window.removeTag = function(tag) {
+        tags = tags.filter(t => t !== tag);
+        renderTags();
+    };
+
+    // Input Event Listeners
+    tagInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addTag(this.value);
+        } else if (e.key === 'Backspace' && this.value === '' && tags.length > 0) {
+            removeTag(tags[tags.length - 1]);
+        }
+    });
+
+    tagInput.addEventListener('input', function() {
+        const value = this.value.toLowerCase();
+        if (value.length > 0) {
+            const filtered = suggestions.filter(s => s.toLowerCase().includes(value) && !tags.includes(s));
+            if (filtered.length > 0) {
+                suggestionsDropdown.innerHTML = filtered.map(s => 
+                    `<div class="suggestion-item" onclick="addTag('${s}')">${s}</div>`
+                ).join('');
+                suggestionsDropdown.style.display = 'block';
+            } else {
+                suggestionsDropdown.style.display = 'none';
+            }
+        } else {
+            suggestionsDropdown.style.display = 'none';
+        }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!tagContainer.contains(e.target)) {
+            suggestionsDropdown.style.display = 'none';
+        }
+    });
+
+    // Form Submit Loading
     document.getElementById('plannerForm').addEventListener('submit', function() {
         document.getElementById('loadingOverlay').style.display = 'flex';
     });

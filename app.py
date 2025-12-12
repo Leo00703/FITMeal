@@ -106,7 +106,17 @@ def generate_plan():
     {{
         "week_plan": {{
             "Monday": [
-                {{"meal": "Breakfast", "recipe_name": "Name", "time": "15m", "tags": ["Tag1"], "id": "unique_id_1"}},
+                {{
+                    "meal": "Breakfast", 
+                    "recipe_name": "Name", 
+                    "time": "15m", 
+                    "calories": 450,
+                    "macros": {{"protein": "30g", "carbs": "40g", "fat": "15g"}},
+                    "ingredients": ["100g Oats", "1 Banana", "20g Honey"],
+                    "instructions": ["Boil water", "Add oats", "Top with banana"],
+                    "tags": ["Tag1"], 
+                    "id": "unique_id_1"
+                }},
                 ...
             ],
             ... (for all 7 days)
@@ -172,11 +182,88 @@ def _get_mock_plan():
     plan = {}
     for day in days:
         plan[day] = [
-            {"meal": "Breakfast", "recipe_name": "Oatmeal with Berries", "time": "10m", "tags": ["Vegan", "Quick"], "id": f"{day}_bf"},
-            {"meal": "Lunch", "recipe_name": "Grilled Chicken Salad", "time": "20m", "tags": ["High Protein"], "id": f"{day}_lunch"},
-            {"meal": "Dinner", "recipe_name": "Salmon with Quinoa", "time": "30m", "tags": ["Healthy Fat"], "id": f"{day}_dinner"}
+            {
+                "meal": "Breakfast", 
+                "recipe_name": "Oatmeal with Berries", 
+                "time": "10m", 
+                "calories": 350,
+                "macros": {"protein": "12g", "carbs": "60g", "fat": "6g"},
+                "ingredients": ["1/2 cup Oats", "1 cup Almond Milk", "1/2 cup Mixed Berries", "1 tbsp Honey"],
+                "instructions": ["Combine oats and milk in a pot.", "Cook on medium heat for 5-7 mins.", "Top with berries and honey."],
+                "tags": ["Vegan", "Quick"], 
+                "id": f"{day}_bf"
+            },
+            {
+                "meal": "Lunch", 
+                "recipe_name": "Grilled Chicken Salad", 
+                "time": "20m", 
+                "calories": 450,
+                "macros": {"protein": "40g", "carbs": "15g", "fat": "20g"},
+                "ingredients": ["150g Chicken Breast", "2 cups Mixed Greens", "1/2 Avocado", "1 tbsp Olive Oil", "Lemon Juice"],
+                "instructions": ["Grill chicken breast until cooked.", "Slice chicken and place over greens.", "Top with avocado, olive oil, and lemon juice."],
+                "tags": ["High Protein"], 
+                "id": f"{day}_lunch"
+            },
+            {
+                "meal": "Dinner", 
+                "recipe_name": "Salmon with Quinoa", 
+                "time": "30m", 
+                "calories": 550,
+                "macros": {"protein": "35g", "carbs": "45g", "fat": "25g"},
+                "ingredients": ["150g Salmon Fillet", "1/2 cup Quinoa", "1 cup Steamed Broccoli", "Lemon slices"],
+                "instructions": ["Bake salmon at 200°C for 12-15 mins.", "Cook quinoa according to package instructions.", "Serve salmon with quinoa and steamed broccoli."],
+                "tags": ["Healthy Fat"], 
+                "id": f"{day}_dinner"
+            }
         ]
     return {"week_plan": plan}
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    user_id = session.get('user_id')
+    message = None
+    
+    if request.method == 'POST':
+        # Handle Profile Update
+        profile_data = {
+            'age': request.form.get('age'),
+            'sex': request.form.get('sex'),
+            'weight': request.form.get('weight'),
+            'height': request.form.get('height'),
+            'activity_level': request.form.get('activity_level'),
+            'goal': request.form.get('goal'),
+            'bio': request.form.get('bio'),
+            'profile_pic': request.form.get('profile_pic')
+        }
+        # Filter out None values to avoid overwriting with empty if not in form (though form usually sends empty string)
+        # Actually, update_user_profile handles merging, but we should be careful with empty strings if we want to keep old values?
+        # The current implementation of update_user_profile merges with existing DB data, but if we send empty strings from form, they will overwrite.
+        # Let's assume the form sends current values if not changed.
+        
+        database.update_user_profile(user_id, profile_data)
+        message = "Profile updated successfully!"
+    
+    profile = database.get_user_profile(user_id)
+    plan = database.get_plan(user_id)
+    favorites = database.get_favorites(user_id)
+    
+    return render_template('profile.html', profile=profile, plan=plan, favorites=favorites, message=message)
+
+@app.route('/add_favorite/<recipe_id>', methods=['POST'])
+@login_required
+def add_favorite_route(recipe_id):
+    user_id = session.get('user_id')
+    recipe_name = request.form.get('recipe_name', 'Unknown Recipe')
+    database.add_favorite(user_id, recipe_id, recipe_name)
+    return redirect(url_for('profile'))
+
+@app.route('/remove_favorite/<recipe_id>', methods=['POST'])
+@login_required
+def remove_favorite_route(recipe_id):
+    user_id = session.get('user_id')
+    database.remove_favorite(user_id, recipe_id)
+    return redirect(url_for('profile'))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -33,6 +33,39 @@ def init_db():
             data TEXT NOT NULL
         )
     ''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS user_profiles (
+            user_id TEXT PRIMARY KEY,
+            weight REAL,
+            height REAL,
+            sex TEXT,
+            age INTEGER,
+            goal TEXT,
+            activity_level TEXT,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
+    
+    # Migration: Add new columns if they don't exist
+    try:
+        conn.execute('ALTER TABLE user_profiles ADD COLUMN bio TEXT')
+    except sqlite3.OperationalError:
+        pass # Column likely exists
+        
+    try:
+        conn.execute('ALTER TABLE user_profiles ADD COLUMN profile_pic TEXT')
+    except sqlite3.OperationalError:
+        pass
+
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS favorites (
+            user_id TEXT,
+            recipe_id TEXT,
+            recipe_name TEXT,
+            PRIMARY KEY (user_id, recipe_id),
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -93,4 +126,61 @@ def verify_user(username, password):
     if user and check_password_hash(user['password'], password):
         return user['id']
     return None
+
+def get_user_profile(user_id):
+    """Retrieve user profile data."""
+    conn = get_db_connection()
+    row = conn.execute('SELECT * FROM user_profiles WHERE user_id = ?', (user_id,)).fetchone()
+    conn.close()
+    if row:
+        return dict(row)
+    return None
+
+def update_user_profile(user_id, profile_data):
+    """Update or create user profile."""
+    conn = get_db_connection()
+    # Check if record exists to preserve existing fields if not provided in update
+    existing = conn.execute('SELECT * FROM user_profiles WHERE user_id = ?', (user_id,)).fetchone()
+    
+    current_data = dict(existing) if existing else {}
+    current_data.update(profile_data)
+    
+    conn.execute('''
+        INSERT OR REPLACE INTO user_profiles (user_id, weight, height, sex, age, goal, activity_level, bio, profile_pic)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        user_id,
+        current_data.get('weight'),
+        current_data.get('height'),
+        current_data.get('sex'),
+        current_data.get('age'),
+        current_data.get('goal'),
+        current_data.get('activity_level'),
+        current_data.get('bio'),
+        current_data.get('profile_pic')
+    ))
+    conn.commit()
+    conn.close()
+
+def add_favorite(user_id, recipe_id, recipe_name):
+    """Add a recipe to favorites."""
+    conn = get_db_connection()
+    conn.execute('INSERT OR IGNORE INTO favorites (user_id, recipe_id, recipe_name) VALUES (?, ?, ?)',
+                 (user_id, recipe_id, recipe_name))
+    conn.commit()
+    conn.close()
+
+def get_favorites(user_id):
+    """Get user favorites."""
+    conn = get_db_connection()
+    rows = conn.execute('SELECT * FROM favorites WHERE user_id = ?', (user_id,)).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+def remove_favorite(user_id, recipe_id):
+    """Remove a recipe from favorites."""
+    conn = get_db_connection()
+    conn.execute('DELETE FROM favorites WHERE user_id = ? AND recipe_id = ?', (user_id, recipe_id))
+    conn.commit()
+    conn.close()
 
