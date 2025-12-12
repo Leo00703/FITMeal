@@ -140,8 +140,58 @@
 
     /* Range Slider Styling */
     input[type=range] {
+        -webkit-appearance: none;
         width: 100%;
-        accent-color: var(--color-accent);
+        background: transparent;
+        margin: 10px 0;
+    }
+    
+    input[type=range]:focus {
+        outline: none;
+    }
+    
+    input[type=range]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 10px;
+        cursor: pointer;
+        background: linear-gradient(to right, rgba(107, 70, 193, 0.2), rgba(107, 70, 193, 0.5));
+        border-radius: 5px;
+        border: 1px solid rgba(255,255,255,0.5);
+    }
+    
+    input[type=range]::-webkit-slider-thumb {
+        height: 28px;
+        width: 28px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid var(--color-accent);
+        cursor: pointer;
+        -webkit-appearance: none;
+        margin-top: -10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover {
+        transform: scale(1.15);
+        box-shadow: 0 6px 15px rgba(107, 70, 193, 0.3);
+    }
+
+    /* Diet Card Specifics */
+    .diet-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 1rem;
+    }
+    
+    .diet-card {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .diet-card .card-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
     }
 </style>
 {% endblock %}
@@ -209,22 +259,73 @@
 
         <!-- 3. Diet & Allergies -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
-            <div>
+            <div style="grid-column: span 2;">
                 <div class="section-title"><span>🥑</span> Diet Type</div>
-                <div class="glass-card" style="padding: 1.5rem;">
-                    <select id="diet" name="diet" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #ddd; background: white;">
-                        <option value="balanced">Balanced</option>
-                        <option value="keto">Keto</option>
-                        <option value="vegan">Vegan</option>
-                        <option value="vegetarian">Vegetarian</option>
-                        <option value="paleo">Paleo</option>
-                        <option value="mediterranean">Mediterranean</option>
-                        <option value="pescatarian">Pescatarian</option>
-                    </select>
+                <div class="card-grid diet-grid">
+                    <label class="selection-card diet-card" onclick="selectCard(this, 'diet')">
+                        <input type="radio" name="diet" value="balanced" checked>
+                        <span class="card-icon">⚖️</span>
+                        <span class="card-label">Balanced</span>
+                    </label>
+                    <label class="selection-card diet-card" onclick="selectCard(this, 'diet')">
+                        <input type="radio" name="diet" value="mediterranean">
+                        <span class="card-icon">🌊</span>
+                        <span class="card-label">Mediterranean</span>
+                    </label>
+                    <label class="selection-card diet-card" onclick="selectCard(this, 'diet')">
+                        <input type="radio" name="diet" value="vegetarian">
+                        <span class="card-icon">🥚</span>
+                        <span class="card-label">Vegetarian</span>
+                    </label>
+                    <label class="selection-card diet-card" onclick="selectCard(this, 'diet')">
+                        <input type="radio" name="diet" value="vegan">
+                        <span class="card-icon">🌱</span>
+                        <span class="card-label">Vegan</span>
+                    </label>
+                    <label class="selection-card diet-card" onclick="selectCard(this, 'diet')">
+                        <input type="radio" name="diet" value="pescatarian">
+                        <span class="card-icon">🐟</span>
+                        <span class="card-label">Pescatarian</span>
+                    </label>
+                    <label class="selection-card diet-card" onclick="selectCard(this, 'diet')">
+                        <input type="radio" name="diet" value="keto">
+                        <span class="card-icon">🥑</span>
+                        <span class="card-label">Keto</span>
+                    </label>
+                    <label class="selection-card diet-card" onclick="selectCard(this, 'diet')">
+                        <input type="radio" name="diet" value="low-carb">
+                        <span class="card-icon">📉</span>
+                        <span class="card-label">Low-Carb</span>
+                    </label>
+                    <label class="selection-card diet-card" onclick="selectCard(this, 'diet')">
+                        <input type="radio" name="diet" value="paleo">
+                        <span class="card-icon">🍖</span>
+                        <span class="card-label">Paleo</span>
+                    </label>
+                    <label class="selection-card diet-card" onclick="selectCard(this, 'diet')">
+                        <input type="radio" name="diet" value="carnivore">
+                        <span class="card-icon">🥩</span>
+                        <span class="card-label">Carnivore</span>
+                    </label>
+                    <label class="selection-card diet-card" onclick="selectCard(this, 'diet')">
+                        <input type="radio" name="diet" value="gluten-free">
+                        <span class="card-icon">🌾</span>
+                        <span class="card-label">Gluten-Free</span>
+                    </label>
+                    <label class="selection-card diet-card" onclick="selectCard(this, 'diet')">
+                        <input type="radio" name="diet" value="diabetic">
+                        <span class="card-icon">🍎</span>
+                        <span class="card-label">Diabetic</span>
+                    </label>
+                    <label class="selection-card diet-card" onclick="selectCard(this, 'diet')">
+                        <input type="radio" name="diet" value="anti-inflammatory">
+                        <span class="card-icon">🫐</span>
+                        <span class="card-label">Anti-Inflammatory</span>
+                    </label>
                 </div>
             </div>
             
-            <div>
+            <div style="grid-column: span 2;">
                 <div class="section-title"><span>🚫</span> Allergies / Exclusions</div>
                 <div class="tag-input-container" id="tagContainer">
                     <!-- Tags will appear here -->
@@ -291,6 +392,14 @@
         const radio = card.querySelector('input[type="radio"]');
         radio.checked = true;
     }
+
+    // Initialize selected cards on load
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkedInputs = document.querySelectorAll('.selection-card input:checked');
+        checkedInputs.forEach(input => {
+            input.closest('.selection-card').classList.add('selected');
+        });
+    });
 
     // Tag System Logic
     const tagInput = document.getElementById('tagInput');
@@ -375,7 +484,18 @@
     });
 
     // Form Submit Loading
-    document.getElementById('plannerForm').addEventListener('submit', function() {
+    document.getElementById('plannerForm').addEventListener('submit', function(e) {
+        // Validation
+        const goal = document.querySelector('input[name="goal"]:checked');
+        const meals = document.querySelector('input[name="meals_per_day"]:checked');
+        const diet = document.querySelector('input[name="diet"]:checked');
+        
+        if (!goal || !meals || !diet) {
+            e.preventDefault();
+            alert('Please select all required options (Goal, Meals per Day, and Diet Type) before generating your plan.');
+            return;
+        }
+
         document.getElementById('loadingOverlay').style.display = 'flex';
     });
 </script>
