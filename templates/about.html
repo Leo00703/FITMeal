@@ -2,6 +2,17 @@
 
 {% block title %}FitMeal Planner - Why FitMeal{% endblock %}
 
+{% block head %}
+<style>
+    body {
+        /* Overlay with theme colors + Healthy Food Background Image */
+        background: linear-gradient(135deg, rgba(255, 241, 235, 0.6), rgba(172, 224, 249, 0.6)), 
+                    url('https://images.unsplash.com/photo-1490818387583-1baba5e638af?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed !important;
+        background-size: cover !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container" style="padding-top: 4rem; padding-bottom: 4rem;">
     
@@ -15,23 +26,43 @@
     </div>
 
     <!-- Comparison Section -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 4rem;">
-        <div class="glass-card">
-            <h3 style="color: var(--color-accent); margin-bottom: 1rem;">Traditional Meal Prep</h3>
-            <ul style="list-style: none;">
-                <li style="margin-bottom: 0.5rem;">❌ Hours of searching for recipes</li>
-                <li style="margin-bottom: 0.5rem;">❌ Generic plans that don't fit your goals</li>
-                <li style="margin-bottom: 0.5rem;">❌ Rigid ingredients you can't swap</li>
-                <li style="margin-bottom: 0.5rem;">❌ Boring, repetitive meals</li>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 4rem; align-items: center;">
+        <!-- Traditional Card -->
+        <div class="glass-card" style="border: 2px solid #f56565; background: rgba(245, 101, 101, 0.05); transition: transform 0.3s ease;">
+            <h3 style="color: #c53030; margin-bottom: 1.5rem; text-align: center; font-size: 1.5rem;">Traditional Meal Prep</h3>
+            <ul style="list-style: none; padding: 0 1rem;">
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: #742a2a;">
+                    <span style="font-size: 1.2rem;">❌</span> Hours of searching for recipes
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: #742a2a;">
+                    <span style="font-size: 1.2rem;">❌</span> Generic plans that don't fit your goals
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: #742a2a;">
+                    <span style="font-size: 1.2rem;">❌</span> Rigid ingredients you can't swap
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: #742a2a;">
+                    <span style="font-size: 1.2rem;">❌</span> Boring, repetitive meals
+                </li>
             </ul>
         </div>
-        <div class="glass-card" style="border: 2px solid var(--color-accent);">
-            <h3 style="color: var(--color-accent); margin-bottom: 1rem;">The FitMeal Way</h3>
-            <ul style="list-style: none;">
-                <li style="margin-bottom: 0.5rem;">✅ Instant AI-generated weekly plans</li>
-                <li style="margin-bottom: 0.5rem;">✅ Tailored to your exact macros & allergies</li>
-                <li style="margin-bottom: 0.5rem;">✅ One-click ingredient substitutions</li>
-                <li style="margin-bottom: 0.5rem;">✅ Endless variety & creativity</li>
+
+        <!-- FitMeal Card -->
+        <div class="glass-card" style="border: 2px solid #48bb78; background: rgba(72, 187, 120, 0.1); transform: scale(1.05); box-shadow: 0 20px 25px -5px rgba(72, 187, 120, 0.2), 0 10px 10px -5px rgba(72, 187, 120, 0.1); position: relative; z-index: 1;">
+            <div style="position: absolute; top: -12px; right: 20px; background: #48bb78; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; letter-spacing: 0.5px;">RECOMMENDED</div>
+            <h3 style="color: #2f855a; margin-bottom: 1.5rem; text-align: center; font-size: 1.5rem;">The FitMeal Way</h3>
+            <ul style="list-style: none; padding: 0 1rem;">
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: #22543d; font-weight: 600;">
+                    <span style="font-size: 1.2rem;">✅</span> Instant AI-generated weekly plans
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: #22543d; font-weight: 600;">
+                    <span style="font-size: 1.2rem;">✅</span> Tailored to your exact macros & allergies
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: #22543d; font-weight: 600;">
+                    <span style="font-size: 1.2rem;">✅</span> One-click ingredient substitutions
+                </li>
+                <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: #22543d; font-weight: 600;">
+                    <span style="font-size: 1.2rem;">✅</span> Endless variety & creativity
+                </li>
             </ul>
         </div>
     </div>

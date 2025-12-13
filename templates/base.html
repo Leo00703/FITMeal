@@ -18,6 +18,13 @@
                     <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:2; width: 40px; height: 40px; transform: translateY(-3px);"><path style="fill:none" d="M0 0h64v64H0z"/><path d="M54.448 33a1.335 1.335 0 0 1 1.322 1.534l-.726 4.839A16 16 0 0 1 39.221 53H24.779A16 16 0 0 1 8.956 39.373l-.726-4.839A1.335 1.335 0 0 1 9.552 33h44.896z" style="fill:none;stroke:currentColor;stroke-width:3px"/><path d="M10.5 33s.335-4.618 3.662-5M47.5 45.284a15.105 15.105 0 0 1-9.6 3.432M43 52.503v1.37A3.13 3.13 0 0 1 39.872 57H24.128A3.127 3.127 0 0 1 21 53.873v-1.37M15.662 33a5.652 5.652 0 0 1 2.527-2.252 5.622 5.622 0 0 1 5.644-7.481 5.623 5.623 0 0 1 7.723-5.598 4.622 4.622 0 0 1 7.944 3.208 4.622 4.622 0 0 1-5.076 4.598 5.625 5.625 0 0 1-5.327 3.012A5.604 5.604 0 0 1 27.307 33" style="fill:none;stroke:currentColor;stroke-width:3px"/><path d="M22 33s-.35-5.557 7.9-10M52 33s-.688-4.299-4-4c0 0-2.097-5.241-6-3" style="fill:none;stroke:currentColor;stroke-width:3px"/><path d="M47 27s1.933-6.361-3-8M40.5 31l-1 1" style="fill:none;stroke:currentColor;stroke-width:3px"/></svg>
                     FitMeal Planner
                 </a>
+
+                <button class="mobile-menu-btn" aria-label="Toggle menu" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                    <span style="display: block; width: 25px; height: 3px; background: var(--color-text-main); margin: 5px 0;"></span>
+                    <span style="display: block; width: 25px; height: 3px; background: var(--color-text-main); margin: 5px 0;"></span>
+                    <span style="display: block; width: 25px; height: 3px; background: var(--color-text-main); margin: 5px 0;"></span>
+                </button>
+
                 <ul class="nav-links">
                     <li><a href="{{ url_for('index') }}">Home</a></li>
                     <li><a href="{{ url_for('about') }}">Why FitMeal</a></li>
