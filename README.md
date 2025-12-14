@@ -84,7 +84,9 @@ FITMeal Planner is an intelligent, AI-powered web application designed to help u
 ```
 FITMeal/
 ├── app.py              # Main Flask application entry point
+├── ai_service.py       # AI integration logic (Groq API)
 ├── database.py         # Database connection and helper functions
+├── utils.py            # Helper functions and mock data
 ├── requirements.txt    # Python dependencies
 ├── static/
 │   └── styles.css      # Global styles and themes
