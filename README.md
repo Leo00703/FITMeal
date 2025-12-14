@@ -71,7 +71,10 @@ FITMeal Planner is an intelligent, AI-powered web application designed to help u
    ```
 
 2. **Access the App**
-   Open your browser and navigate to `http://127.0.0.1:5000`.
+   - **Localhost**: Open your browser and navigate to `http://127.0.0.1:5000`.
+   - **Local Network (Mobile Testing)**:
+     1. Find your computer's local IP address (`ipconfig` on Windows, `ifconfig` on macOS/Linux).
+     2. On your mobile device connected to the same WiFi, navigate to `http://<YOUR_IP_ADDRESS>:5000`.
 
 3. **Get Started**
    - Register for a new account.
