@@ -26,14 +26,15 @@
                 </button>
 
                 <ul class="nav-links">
-                    <li><a href="{{ url_for('index') }}">Home</a></li>
                     <li><a href="{{ url_for('about') }}">Why FitMeal</a></li>
                     {% if session.get('username') %}
-                        <li><a href="{{ url_for('planner') }}">Create a Meal</a></li>
-                        <li><a href="{{ url_for('plan') }}">Your Weekly Meal</a></li>
-                        <li><a href="{{ url_for('profile') }}" style="font-weight: 600;">{{ session.username }}'s Profile</a></li>
+                        <li><a href="{{ url_for('planner') }}" class="btn btn-filled">Create a Meal</a></li>
+                        {% if has_plan %}
+                        <li><a href="{{ url_for('plan') }}" class="btn btn-outline">Your Weekly Plan</a></li>
+                        {% endif %}
+                        <li><a href="{{ url_for('profile') }}" class="btn btn-ghost with-icon">{{ session.username }}'s Profile</a></li>
                     {% else %}
-                        <li><a href="{{ url_for('login') }}" class="btn btn-primary" style="padding: 0.5rem 1rem; color: white;">Login / Sign Up</a></li>
+                        <li><a href="{{ url_for('login') }}" class="btn btn-filled" style="padding: 0.5rem 1rem; color: white;">Login / Sign Up</a></li>
                     {% endif %}
                 </ul>
             </nav>

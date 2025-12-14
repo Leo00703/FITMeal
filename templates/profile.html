@@ -125,7 +125,7 @@
                         <input type="url" id="profile_pic" name="profile_pic" value="{{ profile.profile_pic if profile and profile.profile_pic else '' }}" placeholder="https://example.com/my-pic.jpg">
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="margin-top: 1.5rem;">Save Changes</button>
+                    <button type="submit" class="btn btn-filled" style="margin-top: 1.5rem;">Save Changes</button>
                 </form>
             </div>
 
@@ -133,7 +133,7 @@
             <div class="glass-card" style="padding: 2rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                     <h3 style="margin: 0;">My Weekly Plan</h3>
-                    <a href="{{ url_for('plan') }}" class="btn btn-primary" style="font-size: 0.9rem;">View Full Plan</a>
+                    <a href="{{ url_for('plan') }}" class="btn btn-filled" style="font-size: 0.9rem;">View Full Plan</a>
                 </div>
                 
                 {% if plan and plan.week_plan %}

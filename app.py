@@ -33,6 +33,15 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+@app.context_processor
+def inject_user_status():
+    has_plan = False
+    if 'user_id' in session:
+        plan = database.get_plan(session['user_id'])
+        if plan:
+            has_plan = True
+    return dict(has_plan=has_plan)
+
 @app.route('/')
 def index():
     return render_template('index.html')

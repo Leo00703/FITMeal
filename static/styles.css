@@ -73,47 +73,89 @@ p { margin-bottom: 1rem; }
 }
 
 .btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--radius-btn);
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.25rem;
+    border-radius: 12px;
+    font-weight: 700;
     cursor: pointer;
-    border: none;
-    transition: all var(--transition-speed);
+    transition: all 0.2s;
     text-align: center;
+    border: 2px solid transparent;
+    font-family: var(--font-main);
+    text-decoration: none;
+    min-height: 48px; /* Ensure consistent height */
 }
 
-.btn-primary {
-    background-color: var(--color-accent);
-    color: white;
-    box-shadow: 0 4px 14px 0 rgba(237, 137, 54, 0.39);
+.btn-filled {
+    background: var(--color-accent);
+    color: white !important;
+    box-shadow: 0 2px 5px rgba(237, 137, 54, 0.3);
 }
 
-.btn-primary:hover {
-    background-color: var(--color-accent-hover);
-    transform: translateY(-1px);
+.btn-filled:hover {
+    background: var(--color-accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(237, 137, 54, 0.4);
 }
 
-.btn-secondary {
-    background-color: rgba(255, 255, 255, 0.5);
-    color: var(--color-accent);
-    border: 1px solid var(--color-accent);
+.btn-outline {
+    background: transparent;
+    color: var(--color-accent) !important;
+    border-color: var(--color-accent);
 }
 
-.btn-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.8);
+.btn-outline:hover {
+    background: var(--color-accent);
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+.btn-filled-green {
+    background: #48bb78;
+    color: white !important;
+    box-shadow: 0 2px 5px rgba(72, 187, 120, 0.3);
+}
+
+.btn-filled-green:hover {
+    background: #38a169;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(72, 187, 120, 0.4);
 }
 
 .btn-outline-green {
-    background-color: rgba(255, 255, 255, 0.5);
-    color: #48bb78;
-    border: 1px solid #48bb78;
+    background: transparent;
+    color: #48bb78 !important;
+    border-color: #48bb78;
 }
 
 .btn-outline-green:hover {
-    background-color: rgba(255, 255, 255, 0.8);
-    color: #2f855a;
-    border-color: #2f855a;
+    background: #48bb78;
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--color-text-main);
+    gap: 0.75rem;
+}
+
+.btn-ghost:hover {
+    background: rgba(0,0,0,0.05);
+    color: var(--color-accent);
+}
+
+/* Profile Icon for Ghost Button */
+.btn-ghost.with-icon::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'%3E%3C/path%3E%3Ccircle cx='12' cy='7' r='4'%3E%3C/circle%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 /* Layout Components */
@@ -141,11 +183,29 @@ nav {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
+
+.logo:hover {
+    color: white;
+    background: var(--color-accent);
+    box-shadow: 0 4px 15px rgba(237, 137, 54, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Nav Item Styles - Replaced by Generic Button Classes */
+/* 
+.nav-item-create, .nav-item-plan, .nav-item-profile styles removed.
+Use .btn-filled, .btn-outline, .btn-ghost instead.
+*/
 
 .nav-links {
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem;
     align-items: center;
 }
 
@@ -373,12 +433,22 @@ input:focus, select:focus, textarea:focus {
         top: 100%;
         left: 0;
         width: 100%;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(15px);
         flex-direction: column;
-        padding: 1rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         z-index: 1000;
+        border-bottom-left-radius: 24px;
+        border-bottom-right-radius: 24px;
+        gap: 1rem;
+        transform-origin: top;
+        animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: scaleY(0.8) translateY(-10px); }
+        to { opacity: 1; transform: scaleY(1) translateY(0); }
     }
 
     .nav-links.active {
@@ -386,14 +456,53 @@ input:focus, select:focus, textarea:focus {
     }
 
     .nav-links li {
-        margin: 0.5rem 0;
+        margin: 0;
         width: 100%;
         text-align: center;
     }
 
     .nav-links a {
         display: block;
-        padding: 0.75rem;
+        padding: 1rem;
+        font-size: 1.1rem;
+        height: auto; /* Reset fixed height from desktop */
+    }
+
+    /* Mobile specific styling for links */
+    .nav-links a:not([class*="nav-item-"]):not(.btn) {
+        color: var(--color-text-main);
+        font-weight: 600;
+        border-radius: 12px;
+        transition: background 0.2s;
+    }
+
+    .nav-links a:not([class*="nav-item-"]):not(.btn):hover {
+        background: rgba(0,0,0,0.05);
+        color: var(--color-accent);
+    }
+
+    /* Fix Profile Alignment on Mobile */
+    .btn-ghost.with-icon {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #f7fafc;
+        margin-top: 0.5rem;
+        border: 1px solid #edf2f7;
+        padding: 1rem !important; /* Match other buttons padding */
+        gap: 0.75rem;
+        height: auto; /* Allow it to size naturally like others */
+    }
+
+    .btn-ghost.with-icon::before {
+        content: '';
+        display: block;
+        width: 20px; /* Slightly smaller to match text height better */
+        height: 20px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'%3E%3C/path%3E%3Ccircle cx='12' cy='7' r='4'%3E%3C/circle%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+        /* margin-top removed for better alignment */
     }
 
     /* Grids to Stacks */
