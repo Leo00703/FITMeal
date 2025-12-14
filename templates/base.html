@@ -20,9 +20,9 @@
                 </a>
 
                 <button class="mobile-menu-btn" aria-label="Toggle menu" onclick="document.querySelector('.nav-links').classList.toggle('active')">
-                    <span style="display: block; width: 25px; height: 3px; background: var(--color-text-main); margin: 5px 0;"></span>
-                    <span style="display: block; width: 25px; height: 3px; background: var(--color-text-main); margin: 5px 0;"></span>
-                    <span style="display: block; width: 25px; height: 3px; background: var(--color-text-main); margin: 5px 0;"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
                 </button>
 
                 <ul class="nav-links">
@@ -34,7 +34,7 @@
                         {% endif %}
                         <li><a href="{{ url_for('profile') }}" class="btn btn-ghost with-icon">{{ session.username }}'s Profile</a></li>
                     {% else %}
-                        <li><a href="{{ url_for('login') }}" class="btn btn-filled" style="padding: 0.5rem 1rem; color: white;">Login / Sign Up</a></li>
+                        <li><a href="{{ url_for('login') }}" class="btn btn-filled">Login / Sign Up</a></li>
                     {% endif %}
                 </ul>
             </nav>

@@ -414,6 +414,14 @@ input:focus, select:focus, textarea:focus {
     z-index: 1001;
 }
 
+.hamburger-line {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: var(--color-text-main);
+    margin: 5px 0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     h1 { font-size: 2rem; }
