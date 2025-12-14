@@ -187,4 +187,4 @@ def remove_favorite_route(recipe_id):
     return redirect(url_for('profile'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')

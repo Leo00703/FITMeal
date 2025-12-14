@@ -29,6 +29,17 @@
         margin-bottom: 2.5rem;
     }
 
+    @media (max-width: 768px) {
+        .goal-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 1rem;
+        }
+        
+        .goal-grid .selection-card {
+            padding: 1rem;
+        }
+    }
+
     .selection-card {
         background: rgba(255, 255, 255, 0.5);
         border: 2px solid transparent;
@@ -209,7 +220,7 @@
         <div class="section-title">
             <span>🎯</span> What is your main goal?
         </div>
-        <div class="card-grid">
+        <div class="card-grid goal-grid">
             <label class="selection-card" onclick="selectCard(this, 'goal')">
                 <input type="radio" name="goal" value="Lose Weight" required>
                 <span class="card-icon">⚖️</span>
@@ -237,6 +248,12 @@
             <span>🍽️</span> How many meals per day?
         </div>
         <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+            <label class="selection-card" onclick="selectCard(this, 'meals_per_day')">
+                <input type="radio" name="meals_per_day" value="2">
+                <span class="card-icon">2️⃣</span>
+                <span class="card-label">2 Meals</span>
+                <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.5rem;">Lunch, Dinner</div>
+            </label>
             <label class="selection-card" onclick="selectCard(this, 'meals_per_day')">
                 <input type="radio" name="meals_per_day" value="3" required>
                 <span class="card-icon">3️⃣</span>
