@@ -33,7 +33,7 @@ FITMeal Planner is an intelligent, AI-powered web application designed to help u
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Leo00703/FITMeal.git
    cd FITMeal
    ```
 
