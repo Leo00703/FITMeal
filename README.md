@@ -91,6 +91,7 @@ FITMeal/
 ├── database.py         # Database connection and helper functions
 ├── utils.py            # Helper functions and mock data
 ├── requirements.txt    # Python dependencies
+├── TECHNICAL_DOCUMENTATION.md # Detailed technical docs
 ├── static/
 │   └── styles.css      # Global styles and themes
 ├── templates/          # HTML Templates (Jinja2)
@@ -103,6 +104,10 @@ FITMeal/
 └── fitmeal.db          # SQLite Database (generated)
 ```
 
-## 📄 License
+## � Documentation
+
+For a detailed technical overview of the project architecture, database schema, and logic flow, please refer to the [Technical Documentation](TECHNICAL_DOCUMENTATION.md).
+
+## �📄 License
 
 This project is for educational purposes.
