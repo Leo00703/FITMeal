@@ -30,7 +30,7 @@
                 <h2 style="margin-bottom: 0.5rem;">{{ session.username }}</h2>
                 <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">{{ profile.bio if profile and profile.bio else "No bio yet." }}</p>
                 
-                <a href="{{ url_for('logout') }}" onclick="return confirm('Are you sure you want to logout?');" class="btn" style="background: #e53e3e; color: white; width: 100%;">Logout</a>
+                <a href="{{ url_for('logout') }}" class="btn logout-link" style="background: #e53e3e; color: white; width: 100%;">Logout</a>
             </div>
 
             <!-- Stats Card -->
