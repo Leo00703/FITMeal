@@ -1,3 +1,5 @@
+![FITMeal Cover](repo-cover.png)
+
 # FITMeal Planner
 
 FITMeal Planner is an intelligent, AI-powered web application designed to help users generate personalized weekly meal plans. By leveraging the power of Large Language Models (LLMs) via the Groq API, FITMeal creates tailored nutrition plans based on individual goals, dietary restrictions, and culinary preferences.
