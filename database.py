@@ -35,12 +35,6 @@ def init_db():
     except sqlite3.OperationalError:
         pass
     conn.execute('''
-        CREATE TABLE IF NOT EXISTS recipes (
-            id TEXT PRIMARY KEY,
-            data TEXT NOT NULL
-        )
-    ''')
-    conn.execute('''
         CREATE TABLE IF NOT EXISTS user_profiles (
             user_id TEXT PRIMARY KEY,
             weight REAL,
@@ -101,23 +95,6 @@ def get_plan(user_id):
             'week_plan': json.loads(row['plan_data'])['week_plan'],
             'status': row['status']
         }
-    return None
-
-def save_recipe(recipe_id, recipe_data):
-    """Save a recipe detail."""
-    conn = get_db_connection()
-    conn.execute('INSERT OR REPLACE INTO recipes (id, data) VALUES (?, ?)',
-                 (recipe_id, json.dumps(recipe_data)))
-    conn.commit()
-    conn.close()
-
-def get_recipe(recipe_id):
-    """Retrieve a recipe."""
-    conn = get_db_connection()
-    row = conn.execute('SELECT data FROM recipes WHERE id = ?', (recipe_id,)).fetchone()
-    conn.close()
-    if row:
-        return json.loads(row['data'])
     return None
 
 def create_user(username, password, user_id):
