@@ -28,13 +28,16 @@ The entry point of the application.
 #### `database.py`
 Handles all interactions with the SQLite database (`fitmeal.db`).
 - **Responsibilities**:
-  - `init_db()`: Creates necessary tables (`users`, `plans`, `user_profiles`, `recipes`, `favorites`) if they don't exist.
+  - `init_db()`: Creates necessary tables (`users`, `plans`, `user_profiles`, `favorites`).
   - `create_user()` / `verify_user()`: Manages user authentication.
-  - `save_plan()` / `get_plan()`: Stores and retrieves the JSON-formatted meal plans.
+  - `save_plan()` / `get_plan()` / `update_plan_status()`: Stores and retrieves the JSON-formatted meal plans with status.
+  - `update_user_profile()` / `get_user_profile()`: Stores and retrieves physical attributes, goals, and profile meta.
+  - `add_favorite()` / `get_favorites()` / `remove_favorite()`: CRUD for user favorites.
 - **Schema**:
-  - **users**: Stores user credentials (id, username, password).
-  - **plans**: Stores the generated JSON plan linked to a user.
-  - **user_profiles**: Stores physical attributes and goals.
+  - **users**: id, username (unique), password (hashed).
+  - **plans**: user_id (PK), plan_data (JSON), status (draft/saved).
+  - **user_profiles**: user_id (PK), weight, height, sex, age, goal, activity_level, bio, profile_pic.
+  - **favorites**: (user_id, recipe_id) PK, recipe_name.
 
 #### `ai_service.py`
 The interface for the AI generation logic.
@@ -57,6 +60,7 @@ Contains HTML files using Jinja2 templating syntax.
 - `base.html`: The master template containing the `<head>`, navigation bar, and footer. All other pages extend this.
 - `planner_form.html`: The form where users input their dietary requirements.
 - `plan.html`: The view that renders the complex JSON meal plan data into a user-friendly schedule.
+- `profile.html`: Profile, stats, favorites, plan summary, and a dynamically generated QR code for mobile testing on the same network.
 
 #### `static/`
 - `styles.css`: Global styles for the application.
@@ -80,12 +84,13 @@ Contains HTML files using Jinja2 templating syntax.
     - The AI returns a structured JSON object containing a 7-day plan with meals, recipes, and macros.
 
 4.  **Data Persistence**:
-    - The JSON response is serialized and saved to the `plans` table in SQLite via `database.save_plan`.
+  - The JSON response is serialized and saved to the `plans` table in SQLite via `database.save_plan` (status defaults to `draft`, can be updated to `saved`).
 
 5.  **Presentation**:
-    - The user is redirected to `/plan`.
-    - `app.py` fetches the plan from the database.
-    - `plan.html` iterates through the JSON data to display the weekly schedule.
+  - The user is redirected to `/plan`.
+  - `app.py` fetches the plan from the database.
+  - `plan.html` iterates through the JSON data to display the weekly schedule.
+  - The profile page shows stats, favorites, and a QR code that encodes `http://<local_ip>:5000` for mobile access on the same WiFi.
 
 ## Technical Requirements
 - **Python 3.x**
@@ -93,6 +98,7 @@ Contains HTML files using Jinja2 templating syntax.
 - **SQLite3**: Database (standard library).
 - **Groq**: Client library for AI model access.
 - **python-dotenv**: For managing environment variables (API keys).
+- **qrcode[pil]**, **Pillow**: Generate base64-encoded QR codes for mobile testing links.
 
 ## Environment Variables
 The application relies on a `.env` file for configuration:
