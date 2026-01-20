@@ -1,7 +1,11 @@
 import os
 import uuid
+import base64
+import socket
+from io import BytesIO
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from dotenv import load_dotenv
+import qrcode
 import database
 from utils import login_required
 from ai_service import generate_weekly_plan
@@ -16,6 +20,53 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev_key_for_fitmeal_planner")
 
 # Auth Helper imported from utils
+
+def get_local_ip():
+    """Get the local network IP address of the server."""
+    try:
+        # Create a socket and connect to a remote server (without actually connecting)
+        # This trick gets the local IP that would be used for network communication
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))  # Google's public DNS
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        # Fallback to localhost if unable to determine
+        return "127.0.0.1"
+
+def generate_qr_code():
+    """Generate QR code for local network URL and return as base64 string."""
+    try:
+        # Get the local network IP address
+        local_ip = get_local_ip()
+        port = 5000  # Flask default port
+        url = f"http://{local_ip}:{port}"
+        
+        # Generate QR code
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=2,
+        )
+        qr.add_data(url)
+        qr.make(fit=True)
+        
+        # Create image
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        # Convert to base64
+        buffer = BytesIO()
+        img.save(buffer, format='PNG')
+        buffer.seek(0)
+        img_base64 = base64.b64encode(buffer.getvalue()).decode()
+        
+        return img_base64
+    except Exception as e:
+        print(f"QR Code generation error: {e}")
+        return None
+        return None
 
 @app.context_processor
 def inject_user_status():
@@ -169,7 +220,10 @@ def profile():
     plan = database.get_plan(user_id)
     favorites = database.get_favorites(user_id)
     
-    return render_template('profile.html', profile=profile, plan=plan, favorites=favorites, message=message)
+    # Generate QR code for local network URL
+    qr_code_base64 = generate_qr_code()
+    
+    return render_template('profile.html', profile=profile, plan=plan, favorites=favorites, message=message, qr_code=qr_code_base64)
 
 @app.route('/add_favorite/<recipe_id>', methods=['POST'])
 @login_required

@@ -60,6 +60,15 @@
                 </div>
             </div>
 
+            <!-- Mobile Testing QR Code -->
+            {% if qr_code %}
+            <div class="glass-card" style="padding: 2rem; text-align: center;">
+                <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 0.5rem;">Mobile Testing</h3>
+                <p style="color: var(--color-text-muted); margin-bottom: 1rem; font-size: 0.9rem;">Scan with your mobile device on the same network</p>
+                <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code for Local Network" style="width: 300px; height: 300px; margin: 0 auto; border-radius: 8px; border: 2px solid rgba(255,255,255,0.5);">
+            </div>
+            {% endif %}
+
         </div>
 
         <!-- Right Column: Edit Form, Plans, Favorites -->
