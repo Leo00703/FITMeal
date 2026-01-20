@@ -114,6 +114,6 @@ FITMeal/
 
 For a detailed technical overview of the project architecture, database schema, and logic flow, please refer to the [Technical Documentation](TECHNICAL_DOCUMENTATION.md).
 
-## 📄 License
+## ⚖️ License
 
 Licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
